@@ -30,23 +30,31 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Check python is available
+      - name: Check python (unix)
+        run: |
+          echo "PYTHONX.X"
+          python${{ matrix.python-version}} --version
+
+      - name: Check python (windows)
         run: |
           echo "PYTHON"
           python --version
-          echo "PYTHONX.X"
-          python${{ matrix.python-version}} --version
-          echo "PIP"
-          pip --version
-          echo "PIPX.X"
-          pip${{matrix.python-version}} --version
-          echo "ok"
 
-      - name: Install setuptools
+      - name: Install setuptools (unix)
         run: python${{ matrix.python-version }} -m pip install setuptools wheel
+        if: matrix.os != 'windows-latest'
 
-      - name: Install pipenv / poetry
+      - name: Install pipenv / poetry (unix)
         run: python${{ matrix.python-version }} -m pip install pipenv poetry
+        if: matrix.os != 'windows-latest'
+
+      - name: Install setuptools (windows)
+        run: python -m pip install setuptools wheel
+        if: matrix.os == 'windows-latest'
+
+      - name: Install pipenv / poetry (windows)
+        run: python -m pip install pipenv poetry
+        if: matrix.os == 'windows-latest'
 
       - name: Install serverless
         run: npm install -g serverless
