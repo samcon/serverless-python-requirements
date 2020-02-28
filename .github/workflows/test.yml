@@ -52,5 +52,5 @@ jobs:
           npm run test
         env:
           USE_PYTHON: ${{ matrix.python-version }}
-          LC_ALL=C.UTF-8
-          LANG=C.UTF-8
+          LC_ALL: C.UTF-8
+          LANG: C.UTF-8
