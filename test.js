@@ -14,7 +14,7 @@ const {
   pathExistsSync
 } = require('fs-extra');
 const { quote } = require('shell-quote');
-const { sep, delimiter } = require('path');
+const { sep } = require('path');
 const { _ } = require('lodash');
 
 const { getUserCachePath, sha256Path } = require('./lib/shared');
@@ -96,31 +96,37 @@ const test = (desc, func, opts = {}) =>
   });
 
 const availablePythons = (() => {
-  const versions = [];
+  const binaries = [];
   const mapping = {};
   if (process.env.USE_PYTHON) {
-    versions.push(
+    binaries.push(
       ...process.env.USE_PYTHON.split(',').map(v => v.toString().trim())
     );
   } else {
-    versions.push('3.8', '3.7', '3.6', '2.7');
+    binaries.push(
+      'python',
+      'python3',
+      'python3.6',
+      'python36',
+      'python3.7',
+      'python37',
+      'python3.8',
+      'python38',
+      'python2',
+      'python2.7',
+      'python27'
+    );
   }
   const exe = process.platform === 'win32' ? '.exe' : '';
-  for (const ver of _.uniq(
-    _.concat(
-      versions,
-      versions.map(v => v[0]),
-      ['']
-    )
-  )) {
-    const python = `python${ver}${exe}`;
-    const { stdout, stderr, status } = crossSpawn.sync(python, [
+  for (const bin of binaries) {
+    const python = `${bin}${exe}`;
+    const { stdout, status } = crossSpawn.sync(python, [
       '-c',
       'import sys; sys.stdout.write(".".join(map(str, sys.version_info[:2])))'
     ]);
-    const realVer = stdout && stdout.toString().trim();
-    if (!status && realVer && _.includes(versions, realVer)) {
-      for (const recommend of [realVer, realVer[0]]) {
+    const ver = stdout && stdout.toString().trim();
+    if (!status && ver) {
+      for (const recommend of [ver, ver.split('.')[0]]) {
         if (!mapping[recommend]) {
           mapping[recommend] = python;
         }
@@ -128,17 +134,14 @@ const availablePythons = (() => {
     }
   }
   if (_.isEmpty(mapping)) {
-    throw new Error(`No pythons available meeting ${versions}`);
+    throw new Error('No pythons found');
   }
   return mapping;
 })();
 
-const getPythonBin = (version = 3) => {
+const getPythonBin = version => {
   const bin = availablePythons[String(version)];
-  if (!bin)
-    throw new Error(
-      `No python version ${version} available, only ${availablePythons}`
-    );
+  if (!bin) throw new Error(`No python version ${version} available`);
   return bin;
 };
 
@@ -418,7 +421,7 @@ test(
     process.chdir('tests/base');
     const path = npm(['pack', '../..']);
     npm(['i', path]);
-    // sls(['--dockerizePip=true', '--zip=true', 'package']);
+    sls(['--dockerizePip=true', '--zip=true', 'package']);
 
     const zipfiles = listZipFiles('.serverless/sls-py-req-test.zip');
     const zippedReqs = listRequirementsZipFiles(
