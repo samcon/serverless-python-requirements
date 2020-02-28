@@ -48,7 +48,10 @@
     "prettier": "*",
     "cross-spawn": "*",
     "deasync-promise": "*",
-    "tape": "*"
+    "tape": "*",
+    "lodash.uniq": "^4.5.0",
+    "lodash.includes": "^4.3.0",
+    "lodash.concat": "^4.5.0"
   },
   "dependencies": {
     "@iarna/toml": "^2.2.3",

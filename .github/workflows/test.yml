@@ -49,8 +49,8 @@ jobs:
       - name: Test
         run: |
           PATH=$HOME/.poetry/bin:$PATH \
-          LC_ALL=C.UTF-8 \
-          LANG=C.UTF-8 \
           npm run test
         env:
-          RUNTIME: python${{ matrix.python-version }}
+          USE_PYTHON: ${{ matrix.python-version }}
+          LC_ALL=C.UTF-8
+          LANG=C.UTF-8
