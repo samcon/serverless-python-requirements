@@ -118,14 +118,17 @@ const availablePythons = (() => {
       '-c',
       'import sys; sys.stdout.write(".".join(map(str, sys.version_info[:2])))'
     ]);
-    const realVer = stdout.toString().trim();
-    if (!status && _.includes(versions, realVer)) {
+    const realVer = stdout && stdout.toString().trim();
+    if (!status && realVer && _.includes(versions, realVer)) {
       for (const recommend of [realVer, realVer[0]]) {
         if (!mapping[recommend]) {
           mapping[recommend] = python;
         }
       }
     }
+  }
+  if (_.isEmpty(mapping)) {
+    throw new Error(`No pythons available meeting ${versions}`);
   }
   return mapping;
 })();
