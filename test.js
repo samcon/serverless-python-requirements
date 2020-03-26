@@ -928,6 +928,20 @@ test(
 );
 
 test(
+  'non poetry pyproject.toml without requirements.txt packages handler only',
+  async t => {
+    process.chdir('tests/non_poetry_pyproject');
+    const path = npm(['pack', '../..']);
+    npm(['i', path]);
+    sls(['package']);
+    const zipfiles = listZipFiles('.serverless/sls-py-req-test.zip');
+    t.true(zipfiles.includes(`handler.py`), 'handler is packaged');
+    t.end();
+  },
+  { skip: !hasPython(3.6) }
+);
+
+test(
   'poetry py3.6 can package flask with default options',
   async t => {
     process.chdir('tests/poetry');
