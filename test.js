@@ -797,20 +797,24 @@ test(
   { skip: !canUseDocker() || !hasPython(2) }
 );
 
-test('pipenv py3.6 can package flask with default options', async t => {
-  process.chdir('tests/pipenv');
-  const path = npm(['pack', '../..']);
-  npm(['i', path]);
-  sls(['package']);
-  const zipfiles = await listZipFiles('.serverless/sls-py-req-test.zip');
-  t.true(zipfiles.includes(`flask${sep}__init__.py`), 'flask is packaged');
-  t.true(zipfiles.includes(`boto3${sep}__init__.py`), 'boto3 is packaged');
-  t.false(
-    zipfiles.includes(`pytest${sep}__init__.py`),
-    'dev-package pytest is NOT packaged'
-  );
-  t.end();
-});
+test(
+  'pipenv py3.6 can package flask with default options',
+  async t => {
+    process.chdir('tests/pipenv');
+    const path = npm(['pack', '../..']);
+    npm(['i', path]);
+    sls(['package']);
+    const zipfiles = await listZipFiles('.serverless/sls-py-req-test.zip');
+    t.true(zipfiles.includes(`flask${sep}__init__.py`), 'flask is packaged');
+    t.true(zipfiles.includes(`boto3${sep}__init__.py`), 'boto3 is packaged');
+    t.false(
+      zipfiles.includes(`pytest${sep}__init__.py`),
+      'dev-package pytest is NOT packaged'
+    );
+    t.end();
+  },
+  { skip: !hasPython(3.6) }
+);
 
 test(
   'pipenv py3.6 can package flask with slim option',
