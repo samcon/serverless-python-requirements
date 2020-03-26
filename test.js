@@ -26,11 +26,7 @@ const mkCommand = cmd => (args, options = {}) => {
     args,
     Object.assign(
       {
-        env: Object.assign(
-          {},
-          process.env,
-          { SLS_DEBUG: 't' }
-        )
+        env: Object.assign({}, process.env, { SLS_DEBUG: 't' })
       },
       options
     )
@@ -534,7 +530,12 @@ test(
     process.chdir('tests/base');
     const path = npm(['pack', '../..']);
     npm(['i', path]);
-    sls([`--pythonBin=${getPythonBin(2)}`, '--runtime=python2.7', '--slim=true', 'package']);
+    sls([
+      `--pythonBin=${getPythonBin(2)}`,
+      '--runtime=python2.7',
+      '--slim=true',
+      'package'
+    ]);
     const zipfiles = await listZipFiles('.serverless/sls-py-req-test.zip');
     t.true(zipfiles.includes(`flask${sep}__init__.py`), 'flask is packaged');
     t.deepEqual(
@@ -557,7 +558,12 @@ test(
     process.chdir('tests/base');
     const path = npm(['pack', '../..']);
     npm(['i', path]);
-    sls([`--pythonBin=${getPythonBin(2)}`, '--runtime=python2.7', '--zip=true', 'package']);
+    sls([
+      `--pythonBin=${getPythonBin(2)}`,
+      '--runtime=python2.7',
+      '--zip=true',
+      'package'
+    ]);
     const zipfiles = await listZipFiles('.serverless/sls-py-req-test.zip');
     t.true(
       zipfiles.includes('.requirements.zip'),
@@ -715,7 +721,12 @@ test(
     process.chdir('tests/base');
     const path = npm(['pack', '../..']);
     npm(['i', path]);
-    sls([`--pythonBin=${getPythonBin(2)}`, '--runtime=python2.7', '--dockerizePip=true', 'package']);
+    sls([
+      `--pythonBin=${getPythonBin(2)}`,
+      '--runtime=python2.7',
+      '--dockerizePip=true',
+      'package'
+    ]);
 
     const zipfiles = await listZipFiles('.serverless/sls-py-req-test.zip');
     t.true(zipfiles.includes(`flask${sep}__init__.py`), 'flask is packaged');
