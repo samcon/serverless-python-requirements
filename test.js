@@ -29,8 +29,7 @@ const mkCommand = cmd => (args, options = {}) => {
         env: Object.assign(
           {},
           process.env,
-          { SLS_DEBUG: 't' },
-          process.env.CI ? { LC_ALL: 'C.UTF-8', LANG: 'C.UTF-8' } : {}
+          { SLS_DEBUG: 't' }
         )
       },
       options
@@ -111,8 +110,7 @@ const test = (desc, func, opts = {}) =>
       } catch (err) {
         t.fail(err);
       }
-      if (!ended)
-        t.end();
+      if (!ended) t.end();
     }
   });
 
