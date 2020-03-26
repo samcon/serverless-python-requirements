@@ -519,7 +519,7 @@ test(
     process.chdir('tests/base');
     const path = npm(['pack', '../..']);
     npm(['i', path]);
-    sls([`--pythonBin=${getPythonBin(2)}`, 'package']);
+    sls([`--pythonBin=${getPythonBin(2)}`, '--runtime=python2.7', 'package']);
     const zipfiles = await listZipFiles('.serverless/sls-py-req-test.zip');
     t.true(zipfiles.includes(`flask${sep}__init__.py`), 'flask is packaged');
     t.true(zipfiles.includes(`boto3${sep}__init__.py`), 'boto3 is packaged');
@@ -534,7 +534,7 @@ test(
     process.chdir('tests/base');
     const path = npm(['pack', '../..']);
     npm(['i', path]);
-    sls([`--pythonBin=${getPythonBin(2)}`, '--slim=true', 'package']);
+    sls([`--pythonBin=${getPythonBin(2)}`, '--runtime=python2.7', '--slim=true', 'package']);
     const zipfiles = await listZipFiles('.serverless/sls-py-req-test.zip');
     t.true(zipfiles.includes(`flask${sep}__init__.py`), 'flask is packaged');
     t.deepEqual(
@@ -557,7 +557,7 @@ test(
     process.chdir('tests/base');
     const path = npm(['pack', '../..']);
     npm(['i', path]);
-    sls([`--pythonBin=${getPythonBin(2)}`, '--zip=true', 'package']);
+    sls([`--pythonBin=${getPythonBin(2)}`, '--runtime=python2.7', '--zip=true', 'package']);
     const zipfiles = await listZipFiles('.serverless/sls-py-req-test.zip');
     t.true(
       zipfiles.includes('.requirements.zip'),
@@ -586,6 +586,7 @@ test(
     npm(['i', path]);
     sls([
       `--pythonBin=${getPythonBin(2)}`,
+      '--runtime=python2.7',
       '--dockerizePip=true',
       '--slim=true',
       'package'
@@ -620,7 +621,7 @@ test(
       's/(pythonRequirements:$)/\\1\\n    noDeploy: [bottle]/',
       'serverless.yml'
     ]);
-    sls([`--pythonBin=${getPythonBin(2)}`, 'package']);
+    sls([`--pythonBin=${getPythonBin(2)}`, '--runtime=python2.7', 'package']);
     const zipfiles = await listZipFiles('.serverless/sls-py-req-test.zip');
     t.true(zipfiles.includes(`flask${sep}__init__.py`), 'flask is packaged');
     t.false(zipfiles.includes(`bottle.py`), 'bottle is NOT packaged');
@@ -637,6 +638,7 @@ test(
     npm(['i', path]);
     sls([
       `--pythonBin=${getPythonBin(2)}`,
+      '--runtime=python2.7',
       '--dockerizePip=true',
       '--zip=true',
       'package'
@@ -675,6 +677,7 @@ test(
     npm(['i', path]);
     sls([
       `--pythonBin=${getPythonBin(2)}`,
+      '--runtime=python2.7',
       '--dockerizePip=true',
       '--zip=true',
       '--slim=true',
@@ -712,7 +715,7 @@ test(
     process.chdir('tests/base');
     const path = npm(['pack', '../..']);
     npm(['i', path]);
-    sls([`--pythonBin=${getPythonBin(2)}`, '--dockerizePip=true', 'package']);
+    sls([`--pythonBin=${getPythonBin(2)}`, '--runtime=python2.7', '--dockerizePip=true', 'package']);
 
     const zipfiles = await listZipFiles('.serverless/sls-py-req-test.zip');
     t.true(zipfiles.includes(`flask${sep}__init__.py`), 'flask is packaged');
@@ -730,6 +733,7 @@ test(
     npm(['i', path]);
     sls([
       `--pythonBin=${getPythonBin(2)}`,
+      '--runtime=python2.7',
       '--dockerizePip=true',
       '--slim=true',
       'package'
@@ -760,6 +764,7 @@ test(
     npm(['i', path]);
     sls([
       `--pythonBin=${getPythonBin(2)}`,
+      '--runtime=python2.7',
       '--dockerizePip=true',
       '--slim=true',
       'package'
