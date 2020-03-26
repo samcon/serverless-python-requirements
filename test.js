@@ -6,7 +6,6 @@ const tape = require('tape-promise/tape');
 const {
   chmodSync,
   removeSync,
-  readFileSync,
   readFile,
   copySync,
   writeFileSync,
@@ -28,6 +27,7 @@ const mkCommand = cmd => (args, options = {}) => {
     Object.assign(
       {
         env: Object.assign(
+          {},
           process.env,
           { SLS_DEBUG: 't' },
           process.env.CI ? { LC_ALL: 'C.UTF-8', LANG: 'C.UTF-8' } : {}
@@ -76,8 +76,16 @@ const teardown = () => {
     getUserCachePath(),
     ...glob.sync('serverless-python-requirements-*.tgz')
   ].map(path => removeSync(path));
-  if (!process.cwd().endsWith('base with a space')) {
-    git(['checkout', 'serverless.yml']);
+  const cwd = process.cwd();
+  if (!cwd.endsWith('base with a space')) {
+    try {
+      git(['checkout', 'serverless.yml']);
+    } catch (err) {
+      console.error(
+        `At ${cwd} failed to checkout 'serverless.yml' with ${err}.`
+      );
+      throw err;
+    }
   }
   process.chdir(initialWorkingDir);
   removeSync('tests/base with a space');
@@ -87,12 +95,19 @@ const test = (desc, func, opts = {}) =>
   tape.test(desc, opts, async t => {
     setup();
     try {
-      await func(t);
-    } catch (err) {
-      t.fail(err);
-      t.end();
+      try {
+        await func(t);
+      } catch (err) {
+        t.fail(err);
+      } finally {
+        try {
+          teardown();
+        } catch (err) {
+          t.fail(err);
+        }
+      }
     } finally {
-      teardown();
+      t.end();
     }
   });
 
@@ -104,6 +119,7 @@ const availablePythons = (() => {
       ...process.env.USE_PYTHON.split(',').map(v => v.toString().trim())
     );
   } else {
+    // For running outside of CI
     binaries.push(
       'python',
       'python3',
@@ -179,6 +195,9 @@ const canUseDocker = () => {
   }
   return result.status === 0;
 };
+
+// Skip if broken on these platforms.
+const brokenOn = (...platforms) => platforms.indexOf(process.platform) != -1;
 
 test(
   'default pythonBin can package flask with default options',
@@ -358,7 +377,7 @@ test(
     t.false(zipfiles.includes(`bottle.py`), 'bottle is NOT packaged');
     t.end();
   },
-  { skip: !hasPython(3) }
+  { skip: !hasPython(3) || brokenOn('win32') }
 );
 
 test(
@@ -1849,7 +1868,9 @@ test(
     npm(['i', path]);
     sls(['package']);
 
-    const zipfiles_hello1 = await listZipFilesWithMetaData('.serverless/hello1.zip');
+    const zipfiles_hello1 = await listZipFilesWithMetaData(
+      '.serverless/hello1.zip'
+    );
 
     t.true(
       zipfiles_hello1['module1/foobar'].unixPermissions
@@ -1886,7 +1907,9 @@ test(
     npm(['i', path]);
     sls(['--dockerizePip=true', 'package']);
 
-    const zipfiles_hello = await listZipFilesWithMetaData('.serverless/hello1.zip');
+    const zipfiles_hello = await listZipFilesWithMetaData(
+      '.serverless/hello1.zip'
+    );
 
     t.true(
       zipfiles_hello['module1/foobar'].unixPermissions
