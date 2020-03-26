@@ -60,54 +60,59 @@ const setup = () => {
 };
 
 const teardown = () => {
-  [
-    'puck',
-    'puck2',
-    'puck3',
-    'node_modules',
-    '.serverless',
-    '.requirements.zip',
-    '.requirements-cache',
-    'foobar',
-    'package-lock.json',
-    'slimPatterns.yml',
-    'serverless.yml.bak',
-    'module1/foobar',
-    getUserCachePath(),
-    ...glob.sync('serverless-python-requirements-*.tgz')
-  ].map(path => removeSync(path));
   const cwd = process.cwd();
-  if (!cwd.endsWith('base with a space')) {
-    try {
-      git(['checkout', 'serverless.yml']);
-    } catch (err) {
-      console.error(
-        `At ${cwd} failed to checkout 'serverless.yml' with ${err}.`
-      );
-      throw err;
-    }
+  if (!cwd.startsWith(initialWorkingDir)) {
+    throw new Error(`Somehow cd'd into ${cwd}`);
   }
-  process.chdir(initialWorkingDir);
+  if (cwd != initialWorkingDir) {
+    [
+      'puck',
+      'puck2',
+      'puck3',
+      'node_modules',
+      '.serverless',
+      '.requirements.zip',
+      '.requirements-cache',
+      'foobar',
+      'package-lock.json',
+      'slimPatterns.yml',
+      'serverless.yml.bak',
+      'module1/foobar',
+      getUserCachePath(),
+      ...glob.sync('serverless-python-requirements-*.tgz')
+    ].map(path => removeSync(path));
+    if (!cwd.endsWith('base with a space')) {
+      try {
+        git(['checkout', 'serverless.yml']);
+      } catch (err) {
+        console.error(
+          `At ${cwd} failed to checkout 'serverless.yml' with ${err}.`
+        );
+        throw err;
+      }
+    }
+    process.chdir(initialWorkingDir);
+  }
   removeSync('tests/base with a space');
 };
 
 const test = (desc, func, opts = {}) =>
   tape.test(desc, opts, async t => {
     setup();
+    let ended = false;
     try {
+      await func(t);
+      ended = true;
+    } catch (err) {
+      t.fail(err);
+    } finally {
       try {
-        await func(t);
+        teardown();
       } catch (err) {
         t.fail(err);
-      } finally {
-        try {
-          teardown();
-        } catch (err) {
-          t.fail(err);
-        }
       }
-    } finally {
-      t.end();
+      if (!ended)
+        t.end();
     }
   });
 
@@ -197,7 +202,7 @@ const canUseDocker = () => {
 };
 
 // Skip if broken on these platforms.
-const brokenOn = (...platforms) => platforms.indexOf(process.platform) != -1;
+// const brokenOn = (...platforms) => platforms.indexOf(process.platform) != -1;
 
 test(
   'default pythonBin can package flask with default options',
@@ -377,7 +382,7 @@ test(
     t.false(zipfiles.includes(`bottle.py`), 'bottle is NOT packaged');
     t.end();
   },
-  { skip: !hasPython(3) || brokenOn('win32') }
+  { skip: !hasPython(3) }
 );
 
 test(
@@ -1944,7 +1949,7 @@ test(
     const cachepath = getUserCachePath();
     t.true(
       pathExistsSync(`${cachepath}${sep}downloadCacheslspyc${sep}http`),
-      'cache directoy exists'
+      'cache directory exists'
     );
     t.end();
   },
@@ -1960,7 +1965,7 @@ test(
     sls(['--cacheLocation=.requirements-cache', 'package']);
     t.true(
       pathExistsSync(`.requirements-cache${sep}downloadCacheslspyc${sep}http`),
-      'cache directoy exists'
+      'cache directory exists'
     );
     t.end();
   },
@@ -1977,7 +1982,7 @@ test(
     const cachepath = getUserCachePath();
     t.true(
       pathExistsSync(`${cachepath}${sep}downloadCacheslspyc${sep}http`),
-      'cache directoy exists'
+      'cache directory exists'
     );
     t.end();
   },
@@ -1997,7 +2002,7 @@ test(
     ]);
     t.true(
       pathExistsSync(`.requirements-cache${sep}downloadCacheslspyc${sep}http`),
-      'cache directoy exists'
+      'cache directory exists'
     );
     t.end();
   },
