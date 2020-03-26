@@ -195,8 +195,8 @@ const canUseDocker = () => {
   return result.status === 0;
 };
 
-// Skip if broken on these platforms.
-// const brokenOn = (...platforms) => platforms.indexOf(process.platform) != -1;
+// Skip if running on these platforms.
+const brokenOn = (...platforms) => platforms.indexOf(process.platform) != -1;
 
 test(
   'default pythonBin can package flask with default options',
@@ -611,7 +611,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(2) }
+  { skip: !canUseDocker() || !hasPython(2) || brokenOn('win32') }
 );
 
 test(
@@ -672,7 +672,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(2) }
+  { skip: !canUseDocker() || !hasPython(2) || brokenOn('win32') }
 );
 
 test(
@@ -712,7 +712,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(2) }
+  { skip: !canUseDocker() || !hasPython(2) || brokenOn('win32') }
 );
 
 test(
@@ -733,7 +733,7 @@ test(
     t.true(zipfiles.includes(`boto3${sep}__init__.py`), 'boto3 is packaged');
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(2) }
+  { skip: !canUseDocker() || !hasPython(2) || brokenOn('win32') }
 );
 
 test(
@@ -762,7 +762,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(2) }
+  { skip: !canUseDocker() || !hasPython(2) || brokenOn('win32') }
 );
 
 test(
@@ -794,7 +794,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(2) }
+  { skip: !canUseDocker() || !hasPython(2) || brokenOn('win32') }
 );
 
 test(
@@ -1317,7 +1317,7 @@ test(
     );
     t.end();
   },
-  { skip: !hasPython(2.7) }
+  { skip: !hasPython(2.7) || brokenOn('win32') }
 );
 
 test(
