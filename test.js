@@ -1361,7 +1361,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(2.7) }
+  { skip: !canUseDocker() || !hasPython(2.7) || brokenOn('win32') }
 );
 
 test(
