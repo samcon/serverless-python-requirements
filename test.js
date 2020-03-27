@@ -934,7 +934,7 @@ test(
     const path = npm(['pack', '../..']);
     npm(['i', path]);
     sls(['package']);
-    const zipfiles = listZipFiles('.serverless/sls-py-req-test.zip');
+    const zipfiles = await listZipFiles('.serverless/sls-py-req-test.zip');
     t.true(zipfiles.includes(`handler.py`), 'handler is packaged');
     t.end();
   },
