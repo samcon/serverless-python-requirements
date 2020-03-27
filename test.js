@@ -91,8 +91,18 @@ const teardown = () => {
   removeSync('tests/base with a space');
 };
 
+const testFilter = (() => {
+  const elems = process.argv.slice(2); // skip ['node', 'test.js']
+  if (elems.length) {
+    return desc =>
+      elems.some(text => desc.search(text) != -1) ? tape.test : tape.test.skip;
+  } else {
+    return desc => tape.test;
+  }
+})();
+
 const test = (desc, func, opts = {}) =>
-  tape.test(desc, opts, async t => {
+  testFilter(desc)(desc, opts, async t => {
     setup();
     let ended = false;
     try {
