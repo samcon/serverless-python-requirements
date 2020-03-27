@@ -97,7 +97,7 @@ const testFilter = (() => {
     return desc =>
       elems.some(text => desc.search(text) != -1) ? tape.test : tape.test.skip;
   } else {
-    return desc => tape.test;
+    return () => tape.test;
   }
 })();
 
