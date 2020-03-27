@@ -392,7 +392,7 @@ test(
     t.true(zipfiles.includes(`boto3${sep}__init__.py`), 'boto3 is packaged');
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(3.6) }
+  { skip: !canUseDocker() || !hasPython(3.6) || brokenOn('win32') }
 );
 
 test(
@@ -415,7 +415,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(3.6) }
+  { skip: !canUseDocker() || !hasPython(3.6) || brokenOn('win32') }
 );
 
 test(
@@ -440,7 +440,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(3.6) }
+  { skip: !canUseDocker() || !hasPython(3.6) || brokenOn('win32') }
 );
 
 test(
@@ -473,7 +473,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(3.6) }
+  { skip: !canUseDocker() || !hasPython(3.6) || brokenOn('win32') }
 );
 
 test(
@@ -506,7 +506,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(3.6) }
+  { skip: !canUseDocker() || !hasPython(3.6) || brokenOn('win32') }
 );
 
 test(
@@ -1177,7 +1177,7 @@ test(
     t.true(zipfiles.includes(`boto3${sep}__init__.py`), 'boto3 is packaged');
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(3.6) }
+  { skip: !canUseDocker() || !hasPython(3.6) || brokenOn('win32') }
 );
 
 test(
@@ -1301,7 +1301,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(3.6) }
+  { skip: !canUseDocker() || !hasPython(3.6) || brokenOn('win32') }
 );
 
 test(
@@ -1989,7 +1989,7 @@ test(
 );
 
 test(
-  'py3.6 uses download cache by defaul option',
+  'py3.6 uses download cache by default',
   async t => {
     process.chdir('tests/base');
     const path = npm(['pack', '../..']);
@@ -2018,7 +2018,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(3.6) }
+  { skip: !canUseDocker() || !hasPython(3.6) || brokenOn('win32') }
 );
 
 test(
@@ -2038,7 +2038,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(3.6) }
+  { skip: !canUseDocker() || !hasPython(3.6) || brokenOn('win32') }
 );
 
 test(
@@ -2082,7 +2082,7 @@ test(
     );
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(3.6) }
+  { skip: !canUseDocker() || !hasPython(3.6) || brokenOn('win32') }
 );
 
 test(
@@ -2187,7 +2187,7 @@ test(
 
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(3.6) }
+  { skip: !canUseDocker() || !hasPython(3.6) || brokenOn('win32') }
 );
 
 test(
@@ -2213,5 +2213,5 @@ test(
 
     t.end();
   },
-  { skip: !canUseDocker() || !hasPython(3.6) }
+  { skip: !canUseDocker() || !hasPython(3.6) || brokenOn('win32') }
 );
