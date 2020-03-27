@@ -272,7 +272,7 @@ test(
     t.true(zipfiles.includes(`flask${sep}__init__.py`), 'flask is packaged');
     t.end();
   },
-  { skip: !hasPython(3) }
+  { skip: !hasPython(3) || brokenOn('win32') }
 );
 
 test(
