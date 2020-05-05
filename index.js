@@ -168,6 +168,7 @@ class ServerlessPythonRequirements {
       return BbPromise.bind(this)
         .then(removeVendorHelper)
         .then(layerRequirements)
+        .then(packRequirements)
         .then(() =>
           injectAllRequirements.bind(this)(
             arguments[1].functionObj &&
